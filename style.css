@@ -1,0 +1,1411 @@
+/* --- Font Loading --- */
+/* Use <link> in HTML <head> for better performance:
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+*/
+
+/* --- CSS Variables (Custom Properties) --- */
+:root {
+    --font-primary: 'Roboto', sans-serif;
+
+    /* Light Theme */
+    --bg-gradient-start-light: #87ceeb;
+    --bg-gradient-end-light: #e0f7fa;
+    --text-color-light: #1e2a44;
+    --text-muted-light: #6b7280;
+    --text-detail-light: #4b5563;
+    --header-bg-light: rgba(255, 255, 255, 0.9);
+    --header-border-light: rgba(229, 231, 235, 0.8); /* Slightly less transparent */
+    --card-bg-light: rgba(255, 255, 255, 0.85);
+    --card-border-light: rgba(229, 231, 235, 0.7); /* Slightly less transparent */
+    --forecast-card-bg-light: rgba(255, 255, 255, 0.9);
+    --input-bg-light: rgba(255, 255, 255, 0.95);
+    --input-border-light: rgba(59, 130, 246, 0.3);
+    --modal-bg-light: rgba(255, 255, 255, 0.95); /* Slightly more opaque */
+    --modal-border-light: rgba(229, 231, 235, 0.8);
+    --info-bg-light: rgba(255, 255, 255, 0.85); /* Applied to About/Privacy */
+    --info-text-light: #1e40af; /* Applied to About/Privacy headings */
+    --alert-bg-light: rgba(251, 191, 36, 0.2);
+    --alert-border-light: rgba(251, 191, 36, 0.6);
+    --footer-bg-light: rgba(255, 255, 255, 0.1);
+    --sidebar-bg-light: #f0f4ff;
+    --error-bg-light: #fee2e2; /* Light red */
+    --error-border-light: #fecaca;
+    --error-text-light: #b91c1c; /* Darker red */
+    --loader-overlay-bg-light: rgba(255, 255, 255, 0.6);
+
+
+    /* Dark Theme */
+    --bg-gradient-start-dark: #1f2937; /* Darker start */
+    --bg-gradient-end-dark: #374151; /* Darker end */
+    --text-color-dark: #e5e7eb;
+    --text-muted-dark: #9ca3af;
+    --text-detail-dark: #d1d5db;
+    --header-bg-dark: rgba(31, 41, 55, 0.9);
+    --header-border-dark: rgba(75, 85, 99, 0.8); /* Less transparent border */
+    --card-bg-dark: rgba(31, 41, 55, 0.85);
+    --card-border-dark: rgba(75, 85, 99, 0.7); /* Less transparent border */
+    --forecast-card-bg-dark: rgba(31, 41, 55, 0.9);
+    --input-bg-dark: rgba(55, 65, 81, 0.9);
+    --input-border-dark: rgba(96, 165, 250, 0.4);
+    --modal-bg-dark: rgba(31, 41, 55, 0.95); /* Slightly more opaque */
+    --modal-border-dark: rgba(75, 85, 99, 0.8);
+    --info-bg-dark: rgba(31, 41, 55, 0.85); /* Applied to About/Privacy */
+    --info-text-dark: #93c5fd; /* Applied to About/Privacy headings */
+    --alert-bg-dark: rgba(251, 191, 36, 0.15);
+    --alert-border-dark: rgba(251, 191, 36, 0.4);
+    --footer-bg-dark: rgba(31, 41, 55, 0.3);
+    --sidebar-bg-dark: #1f2937;
+    --error-bg-dark: #450a0a; /* Dark red bg */
+    --error-border-dark: #7f1d1d;
+    --error-text-dark: #fecaca; /* Light red text */
+    --loader-overlay-bg-dark: rgba(17, 24, 39, 0.7); /* Darker overlay */
+
+
+    /* Accents & Shared */
+    --primary-accent: #3b82f6;
+    --secondary-accent: #60a5fa;
+    --logo-accent-start: #2563eb;
+    --logo-accent-end: #f59e0b;
+    --primary-shadow: rgba(59, 130, 246, 0.3); /* Lighter shadow */
+    --loader-color: var(--primary-accent); /* Use accent for loader */
+    --white: #ffffff;
+    --black-shadow: rgba(0, 0, 0, 0.1); /* Lighter shadow */
+    --blur-amount-heavy: 10px; /* Slightly less blur */
+    --blur-amount-light: 5px;
+
+    /* Transitions */
+    --transition-fast: 0.2s ease-out; /* Adjusted timing function */
+    --transition-medium: 0.35s ease-in-out; /* Adjusted timing function */
+} /* Added missing closing brace for :root */
+
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth; /* Smooth scrolling for anchor links */
+}
+
+body {
+    font-family: var(--font-primary);
+    background: linear-gradient(135deg, var(--bg-gradient-start-light), var(--bg-gradient-end-light));
+    color: var(--text-color-light);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative; /* Needed for fixed elements like sidebar toggle */
+    overflow-x: hidden;
+    transition: background var(--transition-medium), color var(--transition-fast);
+}
+
+/* Texture Overlay */
+body::before {
+    content: '';
+    position: fixed; /* Use fixed to cover viewport always */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('https://www.transparenttextures.com/patterns/subtle-carbon.png') repeat; /* Example subtle texture */
+    opacity: 0.05; /* Very subtle */
+    z-index: -1;
+    pointer-events: none; /* Make sure it doesn't interfere with clicks */
+    transition: opacity var(--transition-medium);
+}
+
+main {
+    flex-grow: 1; /* Ensures footer stays at bottom */
+    width: 100%;
+    padding: 0 1rem; /* Add padding to main content area */
+    max-width: 1200px; /* Set max width for content */
+    margin: 0 auto; /* Center content */
+    transition: filter 0.3s ease-in-out; /* Transition for potential blur/dim */
+}
+
+/* Dark Mode Base */
+body.dark {
+    background: linear-gradient(135deg, var(--bg-gradient-start-dark), var(--bg-gradient-end-dark));
+    color: var(--text-color-dark);
+    --primary-accent: #60a5fa;
+    --secondary-accent: #3b82f6;
+    --loader-color: var(--primary-accent);
+}
+
+body.dark::before {
+    /* Optionally change texture for dark mode */
+     background: url('https://www.transparenttextures.com/patterns/stardust.png') repeat;
+     opacity: 0.08;
+}
+
+/* Loader Overlay Styles */
+.loader-overlay {
+    position: fixed; /* Cover the whole screen */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--loader-overlay-bg-light); /* Use variable */
+    backdrop-filter: blur(var(--blur-amount-light)); /* Add subtle blur */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1005; /* Highest z-index */
+    color: var(--text-color-light);
+    text-align: center;
+    transition: opacity var(--transition-fast);
+    /* display: none; is set inline initially */
+}
+
+body.dark .loader-overlay {
+    background-color: var(--loader-overlay-bg-dark);
+    color: var(--text-color-dark);
+}
+
+/* Simple Spinner */
+.loader-spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1); /* Lighter border */
+    border-left-color: var(--loader-color); /* Use variable for spinner color */
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 0.8s linear infinite; /* Faster spin */
+    margin-bottom: 15px;
+}
+
+body.dark .loader-spinner {
+     border: 4px solid rgba(255, 255, 255, 0.1);
+     border-left-color: var(--loader-color);
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+/* Error Message Styles */
+.error-message {
+    background-color: var(--error-bg-light);
+    color: var(--error-text-light);
+    border: 1px solid var(--error-border-light);
+    padding: 0.75rem 1rem; /* Adjusted padding */
+    margin: 1rem auto; /* Centered with margin */
+    border-radius: 8px; /* Consistent border radius */
+    text-align: center;
+    width: 90%; /* Relative width */
+    max-width: 650px; /* Max width consistent with search */
+    box-shadow: 0 2px 8px rgba(185, 28, 28, 0.2); /* Subtle red shadow */
+    font-weight: 500; /* Slightly bolder */
+    /* display: none; is set inline initially */
+    transition: opacity var(--transition-fast);
+}
+
+body.dark .error-message {
+    background-color: var(--error-bg-dark);
+    color: var(--error-text-dark);
+    border-color: var(--error-border-dark);
+    box-shadow: 0 2px 8px rgba(254, 202, 202, 0.1);
+}
+
+/* Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 1rem; /* Adjusted padding */
+    background: var(--header-bg-light);
+    backdrop-filter: blur(var(--blur-amount-heavy));
+    border-bottom: 1px solid var(--header-border-light);
+    box-shadow: 0 2px 10px var(--black-shadow); /* Softer shadow */
+    position: sticky;
+    top: 0; /* Stick to top */
+    left: 0; /* Ensure full width */
+    z-index: 1000;
+    width: 100%;
+    /* Removed bottom radius */
+    transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+body.dark header { /* Use body.dark selector */
+    background: var(--header-bg-dark);
+    border-bottom-color: var(--header-border-dark);
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem; /* Reduced gap */
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.logo img {
+    width: 32px; /* Keep size */
+    height: 32px;
+    filter: drop-shadow(0 1px 2px var(--black-shadow)); /* Softer shadow */
+    transition: transform var(--transition-fast);
+}
+
+.logo img:hover {
+    transform: rotate(10deg) scale(1.05); /* Subtle hover */
+}
+
+.logo h1 {
+    font-size: 1.4rem; /* Slightly smaller */
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--logo-accent-start), var(--logo-accent-end));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    letter-spacing: 0.5px;
+}
+
+#greeting, #clock {
+    display: none; /* Hide on small screens by default */
+    font-size: 0.85rem; /* Slightly smaller */
+    font-weight: 400;
+    padding: 0.4rem 0.8rem;
+    background: rgba(255, 255, 255, 0.2); /* More subtle background */
+    border-radius: 12px;
+    backdrop-filter: blur(var(--blur-amount-light));
+    box-shadow: 0 1px 4px var(--black-shadow); /* Softer shadow */
+    color: var(--text-muted-light);
+    white-space: nowrap; /* Prevent wrapping */
+}
+
+#clock {
+    color: var(--primary-accent);
+    font-weight: 600; /* Slightly less bold */
+}
+
+body.dark #greeting, body.dark #clock {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-muted-dark);
+}
+body.dark #clock {
+    color: var(--primary-accent);
+}
+
+
+/* Toggles */
+.toggles button {
+    padding: 0.5rem 1rem; /* Slightly smaller */
+    border: none;
+    background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+    color: var(--white);
+    cursor: pointer;
+    border-radius: 20px; /* Adjusted radius */
+    font-weight: 600;
+    box-shadow: 0 2px 8px var(--primary-shadow); /* Softer shadow */
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    margin-left: 0.4rem;
+    font-size: 0.85rem; /* Smaller font */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative; /* For Tooltip */
+    overflow: visible; /* Allow tooltip to show */
+}
+
+.toggles button .tooltip { /* Added Tooltip Style */
+    visibility: hidden;
+    width: 80px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%; /* Position above the button */
+    left: 50%;
+    margin-left: -40px; /* Use half of the width */
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 0.75rem;
+    text-transform: none; /* Normal case for tooltip */
+}
+
+.toggles button:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
+
+.toggles button:hover {
+    transform: translateY(-2px); /* Less movement */
+    box-shadow: 0 4px 12px var(--primary-shadow);
+}
+
+.toggles button:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 6px var(--primary-shadow);
+}
+
+/* Search */
+.search {
+    padding: 1rem; /* Increased padding */
+    background: var(--card-bg-light);
+    backdrop-filter: blur(var(--blur-amount-heavy));
+    border-radius: 16px; /* Slightly less round */
+    box-shadow: 0 4px 15px var(--black-shadow); /* Softer shadow */
+    width: 90%;
+    max-width: 650px;
+    margin: 1.5rem auto;
+    display: flex;
+    flex-direction: column; /* Default to column */
+    gap: 0.75rem;
+    transition: background var(--transition-fast), box-shadow var(--transition-fast);
+    border: 1px solid var(--card-border-light);
+}
+
+
+body.dark .search { /* Use body.dark selector */
+    background: var(--card-bg-dark);
+    border-color: var(--card-border-dark);
+}
+
+.search input {
+    padding: 0.8rem 1.2rem; /* Adjusted padding */
+    width: 100%;
+    border: 1px solid var(--input-border-light); /* Thinner border */
+    border-radius: 8px; /* Less round */
+    font-size: 1rem;
+    background: var(--input-bg-light);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    outline: none;
+    color: var(--text-color-light);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05); /* Subtle inset shadow */
+}
+
+.search input:focus {
+    border-color: var(--primary-accent);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); /* Focus ring */
+}
+
+body.dark .search input {
+    background: var(--input-bg-dark);
+    border-color: var(--input-border-dark);
+    color: var(--text-color-dark);
+}
+
+body.dark .search input:focus {
+    border-color: var(--primary-accent);
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.25);
+}
+
+.search button {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+    color: var(--white);
+    cursor: pointer;
+    border-radius: 8px; /* Match input */
+    font-weight: 600;
+    box-shadow: 0 3px 10px var(--primary-shadow); /* Softer shadow */
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex; /* For icon alignment */
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem; /* Space between text and icon */
+}
+
+.search button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px var(--primary-shadow);
+    filter: brightness(1.1); /* Slight brightness increase */
+}
+
+.search button:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 8px var(--primary-shadow);
+    filter: brightness(0.95);
+}
+
+/* Current Weather */
+#current-weather {
+    padding: 1.5rem;
+    background: var(--card-bg-light);
+    backdrop-filter: blur(var(--blur-amount-heavy));
+    border-radius: 16px;
+    box-shadow: 0 6px 20px var(--black-shadow); /* Softer shadow */
+    width: 100%; /* Take full width within main container */
+    max-width: 700px; /* Allow slightly wider card */
+    margin: 1.5rem auto;
+    text-align: center;
+    border: 1px solid var(--card-border-light);
+    transition: background var(--transition-fast), border-color var(--transition-fast), transform 0.3s ease-out, opacity 0.5s ease-out; /* Added opacity transition */
+    opacity: 0; /* Start hidden, fade in */
+    visibility: hidden; /* Use visibility for better accessibility/layout handling */
+    animation: fadeInCurrent 0.5s 0.2s ease-out forwards; /* Fade in animation */
+}
+
+@keyframes fadeInCurrent { /* Renamed animation */
+    from { opacity: 0; visibility: hidden; transform: translateY(10px); }
+    to { opacity: 1; visibility: visible; transform: translateY(0); }
+}
+
+
+body.dark #current-weather { /* Use body.dark selector */
+    background: var(--card-bg-dark);
+    border-color: var(--card-border-dark);
+}
+
+.current-weather-content {
+    display: flex;
+    flex-direction: column; /* Stack on small screens */
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.location-info {
+    order: 1; /* Show location first */
+}
+
+.temp-info {
+    order: 2; /* Temp second */
+    display: flex;
+    align-items: center; /* Vertically align icon and temp */
+    gap: 0.5rem; /* Space between icon and text */
+}
+
+.details {
+    order: 3; /* Details last */
+    display: grid; /* Use grid for alignment */
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Responsive columns */
+    gap: 0.5rem 1rem; /* Row and column gap */
+    width: 100%; /* Take full width */
+    text-align: left;
+    font-size: 0.9rem;
+    color: var(--text-detail-light);
+}
+
+body.dark .details {
+    color: var(--text-detail-dark);
+}
+
+.details p {
+    margin: 0;
+    display: flex; /* Align label and value */
+    justify-content: space-between; /* Push value to the right */
+    border-bottom: 1px dashed rgba(0,0,0,0.05); /* Subtle separator */
+    padding-bottom: 0.25rem;
+}
+
+body.dark .details p {
+     border-bottom-color: rgba(255,255,255,0.08);
+}
+
+
+.detail-label { /* Style for the label part */
+    font-weight: 500;
+    color: var(--text-muted-light);
+    margin-right: 0.5rem;
+}
+body.dark .detail-label {
+    color: var(--text-muted-dark);
+}
+
+#location { /* Renamed from #current-weather h2 for specificity */
+    font-size: 1.5rem; /* Adjusted size */
+    margin-bottom: 0.1rem; /* Reduced margin */
+    font-weight: 600;
+    color: var(--text-color-light); /* Main text color */
+}
+body.dark #location {
+    color: var(--text-color-dark);
+}
+
+/* === ADDED: Local Time Styling === */
+#local-time {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem; /* Space before condition */
+    color: var(--text-muted-light);
+    font-weight: 400;
+}
+body.dark #local-time {
+    color: var(--text-muted-dark);
+}
+
+
+#condition { /* Renamed from #current-weather .condition */
+    font-size: 1rem;
+    margin-bottom: 0.75rem; /* Adjusted margin */
+    color: var(--text-muted-light);
+    font-weight: 400;
+}
+body.dark #condition {
+    color: var(--text-muted-dark);
+}
+
+#weather-icon {
+    width: 45px; /* Adjust size as needed */
+    height: 45px;
+    vertical-align: middle;
+    filter: drop-shadow(0 1px 2px var(--black-shadow));
+    /* display: none; is set inline initially */
+}
+
+
+#temp { /* Renamed from #current-weather .temp */
+    font-size: 2.8rem; /* Slightly larger */
+    font-weight: 700;
+    margin: 0; /* Remove default margins */
+    color: var(--primary-accent);
+    text-shadow: 0 1px 3px var(--black-shadow);
+}
+body.dark #temp {
+    color: var(--primary-accent);
+}
+
+#feels-like { /* Renamed from #current-weather .feels-like */
+    font-size: 0.9rem; /* Adjusted size */
+    margin: 0;
+    color: var(--text-muted-light);
+}
+body.dark #feels-like {
+    color: var(--text-muted-dark);
+}
+
+.weather-quote { /* Renamed from #current-weather #quote */
+    font-style: italic;
+    color: var(--text-muted-light);
+    font-size: 0.9rem;
+    margin-top: 1rem; /* Add space above quote */
+    border-top: 1px solid var(--header-border-light); /* Separator */
+    padding-top: 1rem;
+}
+body.dark .weather-quote {
+    color: var(--text-muted-dark);
+    border-top-color: var(--header-border-dark);
+}
+
+/* Forecast */
+#hourly-forecast, #daily-forecast {
+    padding: 0; /* Remove padding, container has it */
+    width: 100%; /* Use full width within main */
+    max-width: 1200px; /* Keep max width */
+    margin: 1.5rem auto;
+    opacity: 0; /* Start hidden, fade in */
+    visibility: hidden; /* Add visibility */
+    animation: fadeInForecast 0.5s 0.4s ease-out forwards; /* Fade in animation */
+}
+
+@keyframes fadeInForecast { /* New animation for forecasts */
+    from { opacity: 0; visibility: hidden; }
+    to { opacity: 1; visibility: visible; }
+}
+
+#hourly-forecast h3, #daily-forecast h3 {
+    font-size: 1.4rem; /* Adjusted size */
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-color-light); /* Use standard text color */
+    padding-left: 0.5rem; /* Align with container padding */
+    border-left: 3px solid var(--primary-accent); /* Accent line */
+}
+
+body.dark #hourly-forecast h3,
+body.dark #daily-forecast h3 {
+    color: var(--text-color-dark);
+    border-left-color: var(--primary-accent);
+}
+
+.forecast-container {
+    display: flex;
+    overflow-x: auto; /* Enable horizontal scroll */
+    overflow-y: hidden; /* Hide vertical scroll */
+    gap: 0.75rem; /* Reduced gap */
+    padding: 1rem; /* Padding inside container */
+    background: rgba(255, 255, 255, 0.1); /* More subtle background */
+    backdrop-filter: blur(var(--blur-amount-light));
+    border-radius: 12px;
+    box-shadow: inset 0 1px 4px rgba(0,0,0,0.05); /* Inset shadow */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+body.dark .forecast-container { /* Use body.dark selector */
+    background: rgba(31, 41, 55, 0.2);
+     box-shadow: inset 0 1px 4px rgba(255,255,255,0.03);
+}
+
+/* Scrollbar Styling */
+.forecast-container::-webkit-scrollbar {
+    height: 8px; /* Slightly thicker */
+}
+.forecast-container::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 10px;
+}
+.forecast-container::-webkit-scrollbar-thumb {
+    background-color: var(--primary-accent);
+    border-radius: 10px;
+    border: 2px solid transparent; /* Creates padding around thumb */
+    background-clip: content-box; /* Important for border effect */
+}
+.forecast-container::-webkit-scrollbar-thumb:hover {
+    background-color: var(--secondary-accent);
+}
+.forecast-container {
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-accent) transparent;
+}
+
+.forecast-card {
+    flex: 0 0 auto; /* Prevent shrinking/growing */
+    min-width: 90px; /* Slightly wider */
+    max-width: 90px;
+    height: auto; /* Auto height based on content */
+    background: var(--forecast-card-bg-light);
+    backdrop-filter: blur(var(--blur-amount-light));
+    border-radius: 12px; /* Match container */
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around; /* Even spacing */
+    padding: 0.8rem 0.5rem; /* Adjusted padding */
+    box-shadow: 0 2px 8px var(--black-shadow);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    color: var(--text-color-light);
+    border: 1px solid var(--card-border-light); /* Add border */
+}
+
+body.dark .forecast-card { /* Use body.dark selector */
+    background: var(--forecast-card-bg-dark);
+    color: var(--text-color-dark);
+    border-color: var(--card-border-dark);
+}
+
+.forecast-card p {
+    margin: 0.1rem 0; /* Fine-tune spacing */
+    font-size: 0.85rem; /* Adjusted size */
+    line-height: 1.3;
+    word-break: break-word; /* Prevent long conditions overflowing */
+}
+
+.forecast-card .time {
+    font-weight: 600;
+    color: var(--text-muted-light); /* Muted color for time */
+    font-size: 0.8rem;
+}
+body.dark .forecast-card .time {
+    color: var(--text-muted-dark);
+}
+
+
+.forecast-card .temp, .forecast-card .temp-range {
+    font-size: 1rem; /* Adjusted size */
+    font-weight: 600;
+    color: var(--primary-accent);
+}
+
+.forecast-card .condition {
+    font-size: 0.75rem; /* Smaller condition text */
+    color: var(--text-muted-light);
+    min-height: 2.2em; /* Reserve space for 2 lines */
+    display: -webkit-box; /* Multi-line ellipsis */
+   -webkit-line-clamp: 2;
+   line-clamp: 2;
+   -webkit-box-orient: vertical;
+   overflow: hidden;
+}
+
+body.dark .forecast-card .condition {
+    color: var(--text-muted-dark);
+}
+
+.forecast-card .emoji { /* Added emoji style */
+    font-size: 1.3rem; /* Larger emoji */
+    margin-top: 0.2rem;
+}
+
+
+.forecast-card:hover {
+    transform: translateY(-4px) scale(1.03); /* Enhanced hover effect */
+    box-shadow: 0 5px 15px var(--primary-shadow);
+}
+
+/* Alerts */
+#alerts {
+    padding: 1rem 1.5rem; /* Adjusted padding */
+    background: var(--alert-bg-light);
+    backdrop-filter: blur(var(--blur-amount-light));
+    border-radius: 12px; /* Match other cards */
+    border: 1px solid var(--alert-border-light);
+    width: 100%; /* Full width within main */
+    max-width: 800px;
+    margin: 1.5rem auto; /* Consistent margin */
+    /* display: none; is handled by JS */
+    color: var(--text-color-light);
+    box-shadow: 0 3px 10px var(--black-shadow);
+    opacity: 0; /* Start hidden, fade in */
+    visibility: hidden; /* Add visibility */
+    animation: fadeInAlerts 0.5s 0.6s ease-out forwards; /* Fade in animation */
+}
+
+@keyframes fadeInAlerts { /* Animation for alerts */
+    from { opacity: 0; visibility: hidden; }
+    to { opacity: 1; visibility: visible; }
+}
+
+
+body.dark #alerts { /* Use body.dark selector */
+    background: var(--alert-bg-dark);
+    border-color: var(--alert-border-dark);
+    color: var(--text-color-dark);
+}
+
+#alerts h2 { /* Added styles for alert heading */
+    font-size: 1.2rem;
+    color: #b45309; /* Amber/warning color */
+    margin-bottom: 0.75rem;
+    text-align: center;
+}
+body.dark #alerts h2 {
+     color: #fcd34d; /* Lighter amber */
+}
+
+.alert-item { /* Styles for individual alerts */
+    border-bottom: 1px dashed var(--alert-border-light);
+    padding: 0.75rem 0;
+    text-align: left;
+}
+.alert-item:last-child {
+    border-bottom: none;
+}
+body.dark .alert-item {
+    border-bottom-color: var(--alert-border-dark);
+}
+
+.alert-item strong {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.25rem;
+}
+.alert-item p {
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+    line-height: 1.4;
+}
+.alert-item small {
+    font-size: 0.8rem;
+    color: var(--text-muted-light);
+    display: block;
+}
+body.dark .alert-item small {
+    color: var(--text-muted-dark);
+}
+
+
+/* Canvas for Weather Animation */
+#weather-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Behind content */
+    opacity: 0.3; /* Further reduced opacity */
+    transition: opacity var(--transition-medium);
+    pointer-events: none; /* Ignore clicks */
+}
+body.dark #weather-canvas {
+    opacity: 0.4; /* Slightly more visible in dark mode */
+}
+
+
+/* Location Popup Modal */
+#location-popup {
+    /* display: none; is set inline initially */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(3px); /* Blur background */
+    z-index: 1001;
+    display: flex; /* Use flex for centering */
+    justify-content: center;
+    align-items: center;
+    padding: 1rem; /* Add padding for smaller screens */
+    opacity: 0; /* Start hidden */
+    visibility: hidden; /* Add visibility */
+    animation: fadeInModal 0.4s ease-out forwards; /* Fade in */
+}
+
+@keyframes fadeInModal {
+     from { opacity: 0; visibility: hidden; }
+    to { opacity: 1; visibility: visible; }
+}
+
+
+.modal-content {
+    background: var(--modal-bg-light);
+    backdrop-filter: blur(var(--blur-amount-heavy));
+    padding: 1.5rem 2rem; /* Adjusted padding */
+    border-radius: 16px; /* Match cards */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--modal-border-light);
+    width: 100%;
+    max-width: 380px; /* Adjusted max-width */
+    text-align: center;
+    transform: scale(0.95); /* Start slightly small */
+    animation: scaleUpModal 0.4s 0.1s ease-out forwards; /* Scale up effect */
+}
+
+@keyframes scaleUpModal {
+    from { transform: scale(0.95); }
+    to { transform: scale(1); }
+}
+
+
+body.dark .modal-content { /* Use body.dark selector */
+    background: var(--modal-bg-dark);
+    border-color: var(--modal-border-dark);
+}
+
+.modal-content h2 {
+    font-size: 1.4rem; /* Adjusted size */
+    margin-bottom: 1rem;
+    color: var(--primary-accent);
+    font-weight: 600;
+}
+
+.modal-content p {
+    font-size: 0.95rem; /* Adjusted size */
+    margin-bottom: 1.5rem;
+    color: var(--text-muted-light);
+    line-height: 1.5;
+}
+
+body.dark .modal-content h2 {
+    color: var(--primary-accent);
+}
+
+body.dark .modal-content p {
+    color: var(--text-muted-dark);
+}
+
+.modal-buttons { /* Container for buttons */
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.modal-content button {
+    padding: 0.7rem 1.4rem; /* Adjusted padding */
+    border: none;
+    color: var(--white);
+    cursor: pointer;
+    border-radius: 8px; /* Match inputs */
+    font-weight: 600;
+    margin: 0; /* Remove default margin */
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+    font-size: 0.9rem; /* Adjusted size */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+/* Specific button styles */
+#allow-location {
+    background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+    box-shadow: 0 3px 10px var(--primary-shadow);
+}
+#deny-location {
+    background: #6b7280; /* Grey background */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+body.dark #deny-location {
+    background: #4b5563;
+}
+
+#allow-location:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px var(--primary-shadow);
+     filter: brightness(1.1);
+}
+#deny-location:hover {
+     transform: translateY(-2px);
+     filter: brightness(1.1);
+}
+
+
+/* Install Modal (Keeping similar styles) */
+.install-modal { /* Use class if defined in JS */
+    /* Styles from previous example can be kept or adapted */
+    position: fixed;
+    top: 0; /* Adjust position as needed */
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* Darker overlay */
+    z-index: 1002;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    opacity: 0; /* Start hidden */
+    visibility: hidden; /* Add visibility */
+    animation: fadeInModal 0.4s ease-out forwards; /* Fade in */
+}
+.install-modal .modal-content { /* Target nested content */
+    max-width: 450px; /* Adjust width */
+     transform: scale(0.95); /* Start slightly small */
+    animation: scaleUpModal 0.4s 0.1s ease-out forwards; /* Scale up effect */
+    /* Inherits base modal styles, override if needed */
+}
+.install-modal h2 { font-size: 1.6rem; }
+.install-modal p { font-size: 1rem; }
+.install-modal button { font-size: 1rem; padding: 0.8rem 1.8rem; }
+
+
+/* Footer */
+footer {
+    padding: 1rem;
+    background: transparent; /* Make footer transparent */
+    backdrop-filter: none; /* No blur needed */
+    width: 100%;
+    margin-top: auto; /* Push to bottom */
+    text-align: center;
+    border-radius: 0; /* No radius */
+    box-shadow: none; /* No shadow */
+    color: var(--text-muted-light); /* Use muted color */
+    border-top: 1px solid var(--header-border-light); /* Subtle top border */
+}
+
+body.dark footer {
+    background: transparent;
+    color: var(--text-muted-dark);
+    border-top-color: var(--header-border-dark);
+}
+
+footer .footer-content p {
+    font-size: 0.85rem; /* Slightly smaller */
+    margin-bottom: 0.25rem; /* Reduced margin */
+    color: inherit; /* Inherit muted color */
+}
+
+footer .footer-content a {
+    color: var(--primary-accent);
+    text-decoration: none;
+    font-weight: 500; /* Normal weight */
+    transition: color var(--transition-fast), text-decoration var(--transition-fast);
+}
+
+footer .footer-content a:hover {
+    color: var(--secondary-accent);
+    text-decoration: underline;
+}
+
+body.dark footer .footer-content a {
+    color: var(--primary-accent);
+}
+
+/* Info Sections (About and Privacy) */
+/* === Reverted: Removed opacity and animation for visibility === */
+.info-section {
+    padding: 1.5rem;
+    background: var(--info-bg-light); /* Use specific info background */
+    backdrop-filter: blur(var(--blur-amount-heavy));
+    border-radius: 16px; /* Match cards */
+    box-shadow: 0 6px 20px var(--black-shadow);
+    width: 100%;
+    max-width: 800px;
+    margin: 1.5rem auto;
+    text-align: left; /* Align text left */
+    color: var(--text-color-light); /* Standard text color */
+    border: 1px solid var(--card-border-light);
+    /* Removed opacity/animation that was hiding them */
+    visibility: visible; /* Ensure visible */
+}
+
+body.dark .info-section { /* Use body.dark selector */
+    background: var(--info-bg-dark);
+    color: var(--text-color-dark);
+    border-color: var(--card-border-dark);
+}
+
+.info-section h2 {
+    font-size: 1.5rem; /* Adjusted size */
+    margin-bottom: 1rem;
+    color: var(--info-text-light); /* Use specific info text color */
+    font-weight: 600;
+    padding-bottom: 0.5rem; /* Space under heading */
+    border-bottom: 1px solid var(--header-border-light); /* Separator */
+}
+body.dark .info-section h2 {
+     color: var(--info-text-dark); /* Use specific info text color for dark */
+     border-bottom-color: var(--header-border-dark);
+}
+
+
+.info-section p {
+    font-size: 0.95rem; /* Adjusted size */
+    margin-bottom: 1rem;
+    line-height: 1.7; /* Improved readability */
+    max-width: 100%; /* Remove previous limit */
+}
+.info-section p a { /* Style links within info sections */
+     color: var(--primary-accent);
+     text-decoration: underline;
+}
+body.dark .info-section p a {
+     color: var(--primary-accent);
+}
+
+
+/* Progress Bar */
+.progress-container {
+    height: 4px; /* Thinner */
+    background: transparent; /* Make container transparent */
+    position: fixed; /* Keep fixed */
+    top: 0;
+    left: 0;
+    z-index: 1001; /* Above header */
+    width: 100%;
+    box-shadow: none; /* No shadow */
+    pointer-events: none; /* Ignore clicks */
+}
+
+#progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-accent), var(--secondary-accent));
+    width: 0;
+    transition: width 0.1s linear; /* Faster transition */
+    box-shadow: 0 0 8px var(--primary-accent); /* Subtle glow */
+    border-radius: 0 2px 2px 0; /* Rounded end */
+}
+
+
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -250px; /* Start off-screen, adjusted width */
+    width: 250px; /* Standard width */
+    height: 100%;
+    background: var(--sidebar-bg-light); /* Use light variable */
+    padding: 4.5rem 1.5rem 1.5rem; /* Add padding top for header/close button overlap */
+    transition: left var(--transition-medium);
+    z-index: 1003; /* Above progress bar/overlay, below loader */
+    box-shadow: 3px 0 15px rgba(0, 0, 0, 0.15); /* Softer shadow */
+    color: var(--text-color-light); /* Use light variable */
+    border-right: 1px solid var(--header-border-light); /* Match header */
+    overflow-y: auto; /* Allow scrolling if content exceeds height */
+}
+
+body.dark .sidebar {
+     background: var(--sidebar-bg-dark);
+     color: var(--text-color-dark);
+     border-right-color: var(--header-border-dark);
+}
+
+
+.sidebar.active {
+    left: 0; /* Slide in */
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin: 0.8rem 0; /* Adjusted margin */
+}
+
+.sidebar ul li a, .sidebar ul li button { /* Style buttons too */
+    color: var(--text-muted-light); /* Use muted color */
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500; /* Medium weight */
+    transition: color var(--transition-fast), padding-left var(--transition-fast), background-color var(--transition-fast);
+    display: block;
+    padding: 0.6rem 0.5rem; /* Adjusted padding */
+    border-radius: 6px; /* Add subtle radius */
+    background: transparent; /* Ensure button bg is transparent */
+    border: none; /* Remove button border */
+    width: 100%; /* Make button full width */
+    text-align: left; /* Align button text */
+    cursor: pointer; /* Pointer cursor for button */
+}
+body.dark .sidebar ul li a, body.dark .sidebar ul li button {
+     color: var(--text-muted-dark);
+}
+
+
+.sidebar ul li a:hover, .sidebar ul li button:hover {
+    color: var(--primary-accent);
+    background-color: rgba(59, 130, 246, 0.05); /* Subtle hover background */
+    padding-left: 1rem; /* Indent on hover */
+}
+body.dark .sidebar ul li a:hover, body.dark .sidebar ul li button:hover {
+    background-color: rgba(96, 165, 250, 0.1);
+}
+
+
+/* Sidebar Toggle Button (Hamburger) */
+/* This is shown by default (mobile-first) */
+#sidebar-toggle {
+    display: block; /* Show on all screen sizes initially */
+    position: fixed;
+    top: calc(0.8rem + 2px); /* Align with header padding, adjust as needed */
+    left: 1rem;
+    background: rgba(255, 255, 255, 0.2); /* Subtle background */
+    border: 1px solid var(--header-border-light);
+    padding: 0.4rem 0.8rem; /* Smaller padding */
+    color: var(--text-color-light); /* Use text color */
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 1004; /* Above sidebar & overlay, below loader */
+    font-size: 1.2rem; /* Larger icon */
+    font-weight: normal;
+    transition: transform var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast), opacity var(--transition-fast);
+    backdrop-filter: blur(var(--blur-amount-light));
+    opacity: 1;
+}
+/* Hide toggle slightly when sidebar is open */
+body.sidebar-active #sidebar-toggle {
+    opacity: 0.6;
+    pointer-events: none; /* Prevent accidental clicks */
+}
+
+
+body.dark #sidebar-toggle {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--header-border-dark);
+    color: var(--text-color-dark);
+}
+
+
+#sidebar-toggle:hover {
+    transform: scale(1.1); /* Slight scale on hover */
+     background: rgba(255, 255, 255, 0.3);
+}
+body.dark #sidebar-toggle:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+
+/* --- ADDED: Sidebar Close Button --- */
+.close-sidebar-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted-light); /* Use muted color */
+    font-size: 1.8rem; /* Larger close icon */
+    line-height: 1; /* Ensure proper alignment */
+    cursor: pointer;
+    padding: 0.2rem; /* Small padding for click area */
+    transition: color var(--transition-fast), transform var(--transition-fast);
+}
+
+body.dark .close-sidebar-btn {
+    color: var(--text-muted-dark);
+}
+
+.close-sidebar-btn:hover {
+    color: var(--primary-accent);
+    transform: scale(1.1);
+}
+
+
+/* --- ADDED: Optional - Body Dimming when Sidebar is Active --- */
+/* This requires JS to add/remove 'sidebar-active' class on body */
+body::after { /* Define the pseudo-element always */
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); /* Dimming overlay */
+    z-index: 1002; /* Below sidebar, above content */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition-medium), visibility var(--transition-medium);
+    pointer-events: none; /* Initially not clickable */
+}
+
+body.sidebar-active::after {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto; /* Allow clicks on overlay to close sidebar */
+} /* Added missing closing brace */
+
+
+
+/* Back to Top Button */
+#back-to-top {
+    display: flex; /* Keep flex for centering */
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    bottom: 1rem; /* Adjusted position */
+    right: 1rem;
+    background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+    border: none;
+    width: 40px; /* Slightly smaller */
+    height: 40px;
+    color: var(--white);
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.1rem; /* Adjusted size */
+    box-shadow: 0 4px 12px var(--primary-shadow); /* Softer shadow */
+    transition: transform var(--transition-fast), opacity var(--transition-fast), box-shadow var(--transition-fast), visibility var(--transition-fast); /* Add visibility */
+    z-index: 1000; /* Keep above most content */
+    opacity: 0; /* Start hidden */
+    visibility: hidden; /* Start hidden */
+    pointer-events: none; /* Ignore clicks when hidden */
+}
+
+#back-to-top:hover {
+    transform: translateY(-4px) scale(1.05); /* Enhanced hover */
+    box-shadow: 0 6px 18px var(--primary-shadow);
+     filter: brightness(1.1);
+}
+
+#back-to-top.show {
+    opacity: 0.9; /* Slightly transparent */
+    visibility: visible; /* Make visible */
+    pointer-events: auto;
+}
+
+
+/* --- Responsive Adjustments --- */
+@media (min-width: 768px) {
+     main {
+        padding: 0 1.5rem; /* Increase main padding */
+        /* Remove filter if sidebar is fixed open */
+        /* transition: margin-left var(--transition-medium), filter 0.3s ease-in-out; */
+    }
+
+    header {
+        padding: 1rem 1.5rem; /* Restore padding */
+        /* Adjust width/position if sidebar is fixed */
+        /* width: calc(100% - 250px); left: 250px; */
+        /* transition: width var(--transition-medium), left var(--transition-medium); */
+    }
+    .header-right { gap: 1rem; } /* Restore gap */
+    #greeting, #clock {
+        display: block; /* Show greeting/clock */
+        font-size: 0.9rem;
+        padding: 0.4rem 0.9rem;
+    }
+    .logo h1 { font-size: 1.6rem; }
+    .toggles button { font-size: 0.9rem; padding: 0.6rem 1.2rem; }
+
+    .search {
+        flex-direction: row; /* Row layout for search */
+        align-items: center;
+        padding: 0.8rem 1rem; /* Adjust padding */
+        margin: 2rem auto;
+        gap: 1rem; /* Add gap between elements */
+    }
+    .search input {
+        flex-grow: 1; /* Allow input to take available space */
+        width: auto; /* Remove fixed width */
+        padding: 0.8rem 1.3rem;
+        font-size: 1rem;
+    }
+    .search button {
+        width: auto; /* Auto width for buttons */
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+        white-space: nowrap; /* Prevent button text wrapping */
+    }
+
+    #current-weather {
+        padding: 2rem;
+        max-width: 750px; /* Allow wider */
+        margin: 2rem auto;
+    }
+    /* Adjust current weather grid layout */
+    .current-weather-content {
+        flex-direction: row; /* Side-by-side */
+        justify-content: space-around; /* Space out sections */
+        align-items: flex-start; /* Align items to top */
+        gap: 1.5rem;
+    }
+     .location-info { text-align: left; }
+     .details { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); width: auto; /* Auto width */ order: 3;} /* Adjust column width */
+
+    #location { font-size: 1.8rem; }
+    #local-time { font-size: 1rem; margin-bottom: 0.6rem; } /* Adjust local time style */
+    #condition { font-size: 1.1rem; }
+    #temp { font-size: 3.2rem; }
+    #feels-like { font-size: 1rem; }
+    .details { font-size: 0.95rem; }
+
+    #hourly-forecast h3, #daily-forecast h3 { font-size: 1.5rem; }
+    .forecast-container { gap: 1rem; padding: 1.2rem; } /* Adjust gap/padding */
+    .forecast-card { min-width: 110px; max-width: 110px; padding: 1rem 0.75rem; } /* Wider cards */
+    .forecast-card .time { font-size: 0.85rem; }
+    .forecast-card .temp, .forecast-card .temp-range { font-size: 1.1rem; }
+    .forecast-card .condition { font-size: 0.8rem; }
+     .forecast-card .emoji { font-size: 1.5rem; }
+
+
+    #alerts { padding: 1.5rem; margin: 1.5rem auto; font-size: 0.95rem; }
+    .alert-item p { font-size: 0.95rem; }
+     .alert-item small { font-size: 0.85rem; }
+
+
+    .modal-content { padding: 2rem; max-width: 450px; }
+    .modal-content h2 { font-size: 1.6rem; }
+    .modal-content p { font-size: 1rem; }
+    .modal-content button { font-size: 1rem; padding: 0.8rem 1.8rem; }
+
+
+    footer {
+        padding: 1.2rem;
+         /* Adjust width/position if sidebar is fixed */
+        /* width: calc(100% - 250px); left: 250px; */
+        /* transition: width var(--transition-medium), left var(--transition-medium); */
+    }
+    footer .footer-content p { font-size: 0.9rem; }
+
+    .info-section { padding: 2rem; margin: 2rem auto; }
+    .info-section h2 { font-size: 1.8rem; }
+    .info-section p { font-size: 1rem; }
+
+    /* Hide mobile toggle on larger screens */
+     #sidebar-toggle { display: none; } /* CORRECT: Hides hamburger */
+
+     .sidebar { width: 250px; left: -250px; } /* Keep hidden by default */
+     /* Body class still controls visibility via JS */
+     body.sidebar-active .sidebar { left: 0; }
+     /* Remove body dimming overlay on larger screens if not desired */
+    /* If you don't want dimming on desktop, uncomment below */
+    /* opacity: 0; visibility: hidden; pointer-events: none; */
+
+
+    .sidebar ul li { margin: 1rem 0; }
+    .sidebar ul li a, .sidebar ul li button { font-size: 1rem; }
+
+    #back-to-top { bottom: 1.5rem; right: 1.5rem; width: 45px; height: 45px; font-size: 1.3rem; }
+}
+
+/* Further adjustments for very large screens if needed */
+@media (min-width: 1200px) {
+     main { padding: 0 2rem; }
+     .search { max-width: 800px; }
+     #current-weather { max-width: 850px; }
+     .forecast-card { min-width: 120px; max-width: 120px; }
+}
