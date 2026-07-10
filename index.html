@@ -3,219 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Theme Color for PWA -->
-    <meta name="theme-color" content="#1a2a44">
-    <meta name="description" content="WeatherVista - Real-time weather updates, forecasts, and alerts for your location.">
-    <title>WeatherVista 🌦️</title> <!-- More descriptive title -->
+    <meta name="theme-color" content="#1e3a8a">
+    <meta name="description" content="WeatherVista - Real-time weather with Material Design 3">
+    <title>WeatherVista</title>
+    
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
-    <!-- Consider adding Apple touch icons for iOS -->
+    <link rel="icon" href="assets/favicon.ico">
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+    
+    <!-- Premium Font: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- === ADDED: Loader Overlay === -->
-    <div id="loader-overlay" class="loader-overlay" style="display: none;">
+    <!-- Loader -->
+    <div id="loader-overlay" class="loader-overlay">
         <div class="loader-spinner"></div>
-        <p>Loading Weather Data...</p>
+        <p>Loading weather data...</p>
     </div>
 
-<!-- Sidebar -->
-<button id="sidebar-toggle" class="sidebar-toggle" aria-label="Toggle navigation menu" aria-expanded="false">☰</button>
-<nav id="sidebar" class="sidebar">
-    <!-- === ADDED: Close Button Inside Sidebar === -->
-    <button id="close-sidebar-btn" class="close-sidebar-btn" aria-label="Close menu">×</button>
+    <!-- Navigation Drawer -->
+    <nav id="sidebar" class="navigation-drawer">
+        <div class="drawer-header">
+            <div class="logo">
+                <img src="assets/logo.png" alt="WeatherVista" width="32" height="32">
+                <h1>WeatherVista</h1>
+            </div>
+            <button id="close-sidebar-btn" class="close-btn">✕</button>
+        </div>
+        <ul>
+            <li><a href="#current-weather">Current Weather</a></li>
+            <li><a href="#hourly-forecast">Hourly Forecast</a></li>
+            <li><a href="#daily-forecast">7-Day Forecast</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#privacy">Privacy</a></li>
+        </ul>
+        <button id="install-app-btn" class="install-btn" style="display:none;">Install App</button>
+    </nav>
 
-    <ul>
-        <li><a href="#current-weather">Current</a></li>
-        <li><a href="#hourly-forecast">Hourly</a></li>
-        <li><a href="#daily-forecast">Daily</a></li>
-        <li><a href="#about">About</a></li>
-        <li><a href="#privacy">Privacy</a></li>
-        <li><button id="install-app-btn" style="display: none; width: 100%; margin-top: 10px;">Install App</button></li>
-    </ul>
-</nav>
-
-    <header>
-        <div class="logo">
-            <img src="assets/logo.png" alt="WeatherVista Logo" width="40" height="40"> <!-- Added dimensions for performance -->
+    <header class="header">
+        <button id="sidebar-toggle" class="menu-btn" aria-label="Open menu">☰</button>
+        
+        <div class="logo header-logo">
+            <img src="assets/logo.png" alt="WeatherVista" width="32" height="32">
             <h1>WeatherVista</h1>
         </div>
+
         <div class="header-right">
-            <div id="greeting">Loading...</div> <!-- Default text -->
-            <div id="clock">--:--:-- --</div>   <!-- Default text -->
-            <div class="toggles">
-                <!-- Use aria-label for accessibility -->
-                <button id="temp-toggle" aria-label="Switch temperature unit">°F<span class="tooltip">Switch Units</span></button>
-                <button id="mode-toggle" aria-label="Switch color mode">🌙<span class="tooltip">Dark Mode</span></button>
-            </div>
+            <div id="greeting" class="greeting"></div>
+            <div id="clock" class="clock"></div>
+            <button id="temp-toggle" class="md-btn icon-btn"></button>
+            <button id="mode-toggle" class="md-btn icon-btn"></button>
         </div>
     </header>
 
-    <main> <!-- Wrap main content in <main> tag -->
-
-        <div class="search">
-             <!-- === CHANGED: Placeholder Text === -->
-            <input type="text" id="city-input" placeholder="Your city? 👀" aria-label="Enter location for weather search">
-            <button id="search-btn" aria-label="Search location">Search</button>
-             <!-- === CHANGED: Button Text === -->
-            <button id="location-btn" aria-label="Use my current location">📍 Find Me!</button>
+    <main>
+        <div class="search-container">
+            <div class="search-bar">
+                <input type="text" id="city-input" placeholder="Search city or zip code..." aria-label="Search city">
+                <button id="search-btn" class="md-btn filled">Search</button>
+                <button id="location-btn" class="md-btn outlined">📍 Find Me</button>
+            </div>
         </div>
 
-        <!-- === ADDED: Error Message Area === -->
-        <div id="error-message" class="error-message" role="alert" style="display: none;">
-            <!-- Error text will be inserted here by JavaScript -->
-        </div>
+        <div id="error-message" class="error-message"></div>
 
-        <!-- Progress Bar for Scroll -->
-        <div class="progress-container">
-            <div id="progress-bar"></div>
-        </div>
-
-        <!-- Current Weather Section -->
-        <section id="current-weather" aria-labelledby="current-weather-heading">
-            <!-- Removed initial loader div here, using overlay now -->
-            <h2 id="current-weather-heading" class="section-heading">Current Weather</h2>
-            <div class="current-weather-content">
+        <!-- Current Weather -->
+        <section id="current-weather" class="md-card current-card">
+            <h2 class="section-title">Current Weather</h2>
+            <div class="current-content">
                 <div class="location-info">
-                    <h3 id="location">Loading Location...</h3>
-                    <!-- === ADDED: Local Time Display === -->
-                    <p id="local-time" class="local-time-display">Loading time...</p>
-                    <p id="condition">Fetching condition...</p>
+                    <h3 id="location">—</h3>
+                    <p id="local-time" class="local-time">—</p>
+                    <p id="condition" class="condition">—</p>
                 </div>
-                <div class="temp-info">
-                    <img id="weather-icon" src="" alt="" style="display: none; vertical-align: middle; width: 50px; height: 50px;"> <!-- Added Weather Icon placeholder -->
-                    <p class="temp" id="temp">--°</p>
-                    <p id="feels-like">Feels like --°</p>
+                <div class="temp-container">
+                    <img id="weather-icon" src="" alt="">
+                    <div class="temperature">
+                        <span id="temp">--°</span>
+                        <span id="feels-like" class="feels-like">Feels like —°</span>
+                    </div>
                 </div>
-                 <div class="details">
-                    <p><span class="detail-label">Humidity:</span> <span id="humidity">--%</span></p>
-                    <p><span class="detail-label">Wind:</span> <span id="wind">-- km/h</span></p>
-                    <p><span class="detail-label">Pressure:</span> <span id="pressure">-- hPa</span></p>
-                    <p><span class="detail-label">AQI:</span> <span id="aqi">--</span></p>
-                    <p><span class="detail-label">UV Index:</span> <span id="uv">--</span></p>
+                <div class="details-grid">
+                    <div class="detail-item"><span class="label">Humidity</span><span id="humidity" class="value">—</span></div>
+                    <div class="detail-item"><span class="label">Wind</span><span id="wind" class="value">—</span></div>
+                    <div class="detail-item"><span class="label">Pressure</span><span id="pressure" class="value">—</span></div>
+                    <div class="detail-item"><span class="label">AQI</span><span id="aqi" class="value">—</span></div>
+                    <div class="detail-item"><span class="label">UV Index</span><span id="uv" class="value">—</span></div>
                 </div>
             </div>
-            <p id="quote" class="weather-quote">Loading quote...</p>
+            <p id="quote" class="weather-quote"></p>
         </section>
 
         <!-- Hourly Forecast -->
-        <section id="hourly-forecast" aria-labelledby="hourly-heading">
-            <h3 id="hourly-heading">Hourly Forecast</h3>
-            <div class="forecast-container hourly-container">
-                <!-- Cards will be added by JS -->
-                <p>Loading hourly forecast...</p>
-            </div>
+        <section id="hourly-forecast" class="md-card">
+            <h2 class="section-title">Hourly Forecast</h2>
+            <div class="forecast-container hourly-container"></div>
         </section>
 
-        <!-- Daily Forecast -->
-        <section id="daily-forecast" aria-labelledby="daily-heading">
-            <h3 id="daily-heading">7-Day Forecast</h3>
-            <div class="forecast-container daily-container">
-                <!-- Cards will be added by JS -->
-                <p>Loading daily forecast...</p>
-            </div>
+        <!-- 7-Day Forecast -->
+        <section id="daily-forecast" class="md-card">
+            <h2 class="section-title">7-Day Forecast</h2>
+            <div class="forecast-container daily-container"></div>
         </section>
 
-        <!-- Weather Alerts -->
-        <section id="alerts" aria-live="polite" style="display: none;">
-            <!-- Alerts will be added by JS -->
-        </section>
+        <!-- Alerts -->
+        <section id="alerts" class="md-card alert-card" style="display:none;"></section>
 
-        <!-- Weather Animation Canvas -->
-        <canvas id="weather-canvas" aria-hidden="true"></canvas> <!-- Hide from screen readers -->
+        <!-- Canvas -->
+        <canvas id="weather-canvas" aria-hidden="true"></canvas>
 
-        <!-- Location Permission Popup -->
-        <div id="location-popup" class="modal" role="dialog" aria-labelledby="location-popup-heading" aria-modal="true" style="display: none;">
-            <div class="modal-content">
-                <h2 id="location-popup-heading">Location Access</h2>
-                 <!-- === CHANGED: Popup Text === -->
-                <p>Allow WeatherVista to use your location? We promise it’s just for weather—not for spying on your snack stash. 🌦️📍</p>
-                <div class="modal-buttons">
-                    <button id="allow-location" class="button-primary">Allow</button>
-                    <button id="deny-location">Deny</button>
+        <!-- Location Permission -->
+        <div id="location-popup" class="modal">
+            <div class="modal-content md-card">
+                <h2>Location Access</h2>
+                <p>WeatherVista needs your location to provide accurate local weather.</p>
+                <div class="modal-actions">
+                    <button id="deny-location" class="md-btn outlined">Deny</button>
+                    <button id="allow-location" class="md-btn filled">Allow</button>
                 </div>
             </div>
         </div>
 
-        <!-- About Section -->
-        <section id="about" class="info-section" aria-labelledby="about-heading">
-             <!-- === CHANGED: About Text === -->
-            <h2 id="about-heading">Welcome to WeatherVista!</h2>
-            <p>Built by the one and only Nilay Naha (probably wearing shades indoors), this baby dishes out real-time weather updates using your location or any city you fancy. 🌍☀️🌧️
-                Get hourly and daily forecasts, alerts that scream 'don’t forget your umbrella', and a PWA so smooth it even works offline (yes, magic).
-                <b>Coming soon? Maybe interactive maps… because scrolling is the new cardio. 🗺️💪</b></p>
+        <!-- About -->
+        <section id="about" class="md-card info-card">
+            <h2 class="section-title">Welcome to WeatherVista</h2>
+            <p>Built with care by Nilay Naha. Delivers real-time weather with beautiful Material Design 3 interface, dynamic animations, and smooth PWA experience.</p>
         </section>
 
-        <!-- Privacy Policy Section -->
-        <section id="privacy" class="info-section" aria-labelledby="privacy-heading">
-             <!-- === CHANGED: Privacy Text & Link === -->
-            <h2 id="privacy-heading">Privacy Policy</h2>
-            <p>We grab your location (with your permission, duh) to give you weather updates faster than you can say ‘umbrella.’ ☔️
-                Your location stays cozy on your device—no peeking, no storing on our end, except a quick chat with WeatherAPI.com (check their policy if you’re into that kind of thing).
-                We don’t share your stuff. Ever. But hey, tech isn’t perfect—use at your own risk.
-                Questions? Complaints? Fan mail? <a href="https://www.linkedin.com/in/nilay-naha/" target="_blank" rel="noopener noreferrer">Nilay Naha</a>.</p>
+        <!-- Privacy -->
+        <section id="privacy" class="md-card info-card">
+            <h2 class="section-title">Privacy Policy</h2>
+            <p>We only use your location (with permission) to fetch weather data. Nothing is stored on our servers. Weather data provided by <a href="https://www.weatherapi.com/" target="_blank">WeatherAPI.com</a>.</p>
         </section>
+    </main>
 
-    </main> <!-- End of main content -->
+    <button id="back-to-top" class="md-fab">↑</button>
 
-    <!-- Back to Top Button -->
-    <button id="back-to-top" title="Back to Top" aria-label="Scroll back to top">↑</button>
-
-    <!-- Footer -->
     <footer>
-        <div class="footer-content">
-             <!-- Optional: PWA Install Button in Footer -->
-             <button id="install-app-btn-footer" style="display: none; margin-bottom: 10px;">Install WeatherVista App</button>
-            <p>Designed & Developed By <a href="https://github.com/AmiNilay" target="_blank" rel="noopener noreferrer">Nilay Naha</a></p>
-             <p>© <span id="copyright-year"></span> WeatherVista. Weather data provided by <a href="https://www.weatherapi.com/" target="_blank" rel="noopener noreferrer" title="Free Weather API">WeatherAPI.com</a>.</p>
-        </div>
+        <p>Designed & Developed by <a href="https://github.com/AmiNilay" target="_blank">Nilay Naha</a></p>
+        <p>© <span id="copyright-year"></span> WeatherVista • Data by WeatherAPI.com</p>
     </footer>
 
-    <!-- JavaScript -->
     <script src="script.js"></script>
-    <script>
-        // Service Worker Registration
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => { // Register SW after page load
-                navigator.serviceWorker.register('service-worker.js')
-                    .then(registration => {
-                        console.log('Service Worker registered successfully. Scope: ', registration.scope);
-                    })
-                    .catch(error => {
-                        console.error('Service Worker registration failed:', error);
-                    });
-            });
-        }
-
-        // Set Copyright Year
-        const copyrightYearElement = document.getElementById('copyright-year');
-        if (copyrightYearElement) {
-            copyrightYearElement.textContent = new Date().getFullYear();
-        }
-
-
-        // Simple check to ensure core JS loaded (optional)
-        // Ensure validateDOM exists before calling
-         window.addEventListener('load', () => { // Check after DOM is potentially ready
-             if(typeof validateDOM !== 'function') {
-                 console.error("script.js might not have loaded correctly or validateDOM is missing.");
-                 const errorDiv = document.getElementById('error-message');
-                 if(errorDiv) {
-                    errorDiv.textContent = "Error loading application script. Please refresh.";
-                    errorDiv.style.display = 'block';
-                 } else {
-                    alert("Error loading application script. Please refresh.");
-                 }
-             } else {
-                 // If validateDOM exists, maybe call it here if not called internally already
-                 // validateDOM(); // Or ensure it's called within script.js DOMContentLoaded
-             }
-         });
-
-    </script>
 </body>
 </html>
