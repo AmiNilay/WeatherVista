@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#1e40af">
+    <meta name="description" content="WeatherVista - Real-time weather with Material Design 3">
     <title>WeatherVista</title>
     
     <link rel="stylesheet" href="style.css">
@@ -13,19 +14,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Loader -->
     <div id="loader-overlay" class="loader-overlay">
         <div class="loader-spinner"></div>
         <p>Loading weather data...</p>
     </div>
 
-    <!-- Hamburger for Mobile -->
+    <!-- Mobile Menu Button -->
     <button id="sidebar-toggle" class="menu-btn" aria-label="Open menu">☰</button>
 
-    <!-- Sidebar / Navigation Drawer -->
+    <!-- Navigation Drawer -->
     <nav id="sidebar" class="navigation-drawer">
         <div class="drawer-header">
             <div class="logo">
-                <img src="assets/logo.png" alt="WeatherVista" width="32">
+                <img src="assets/logo.png" alt="WeatherVista" width="32" height="32">
                 <h1>WeatherVista</h1>
             </div>
             <button id="close-sidebar-btn" class="close-btn">✕</button>
@@ -58,6 +60,7 @@
 
         <div id="error-message" class="error-message"></div>
 
+        <!-- Current Weather -->
         <section id="current-weather" class="md-card current-card">
             <h2 class="section-title">Current Weather</h2>
             <div class="current-content">
@@ -68,7 +71,7 @@
                 </div>
                 <div class="temp-container">
                     <img id="weather-icon" src="" alt="">
-                    <div>
+                    <div class="temperature">
                         <span id="temp" class="temp">--°</span>
                         <span id="feels-like" class="feels-like">Feels like —°</span>
                     </div>
@@ -84,23 +87,28 @@
             <p id="quote" class="weather-quote"></p>
         </section>
 
+        <!-- Hourly Forecast -->
         <section id="hourly-forecast" class="md-card">
             <h2 class="section-title">Hourly Forecast</h2>
             <div class="forecast-container hourly-container"></div>
         </section>
 
+        <!-- 7-Day Forecast -->
         <section id="daily-forecast" class="md-card">
             <h2 class="section-title">7-Day Forecast</h2>
             <div class="forecast-container daily-container"></div>
         </section>
 
+        <!-- Alerts -->
         <section id="alerts" class="md-card" style="display:none;"></section>
 
+        <!-- About -->
         <section id="about" class="md-card">
             <h2 class="section-title">Welcome to WeatherVista</h2>
             <p>Built with care by Nilay Naha. Delivers real-time weather with beautiful Material Design 3 interface, dynamic animations, and smooth PWA experience.</p>
         </section>
 
+        <!-- Privacy -->
         <section id="privacy" class="md-card">
             <h2 class="section-title">Privacy Policy</h2>
             <p>We only use your location (with permission) to fetch weather data. Nothing is stored on our servers. Weather data provided by <a href="https://www.weatherapi.com/" target="_blank">WeatherAPI.com</a>.</p>
@@ -110,6 +118,7 @@
     <canvas id="weather-canvas" aria-hidden="true"></canvas>
     <button id="back-to-top" class="md-fab">↑</button>
 
+    <!-- Location Permission Modal -->
     <div id="location-popup" class="modal">
         <div class="modal-content md-card">
             <h2>Location Access</h2>
