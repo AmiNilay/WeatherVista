@@ -1,20 +1,4 @@
-# Dependencies
-node_modules/
-
-# Environment variables
-.env
 config.js
-
-# Build outputs
-dist/
-build/
-
-# Logs
-*.log
-
-# Editor files
-.vscode/
-.idea/
-
-# macOS
+.env
+node_modules/
 .DS_Store
