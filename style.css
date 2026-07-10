@@ -8,7 +8,7 @@
     --md-on-surface: #0f172a;
     --md-outline: #e2e8f0;
     --md-radius: 28px;
-    --transition: 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+    --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body {
@@ -20,7 +20,6 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    line-height: 1.6;
 }
 
 body.dark {
@@ -33,7 +32,7 @@ body.dark {
     color: var(--md-on-surface);
 }
 
-/* Menu Button (Mobile) */
+/* Mobile Menu Button */
 .menu-btn {
     position: fixed;
     top: 16px;
@@ -48,11 +47,7 @@ body.dark {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-@media (min-width: 1024px) {
-    .menu-btn { display: none; }
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
 /* Navigation Drawer */
@@ -63,10 +58,10 @@ body.dark {
     width: 280px;
     height: 100vh;
     background: var(--md-surface);
-    box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+    box-shadow: 6px 0 25px rgba(0,0,0,0.15);
     z-index: 1100;
     transition: left var(--transition);
-    padding: 70px 0 20px;
+    padding-top: 70px;
     overflow-y: auto;
 }
 
@@ -74,24 +69,25 @@ body.dark {
 
 @media (min-width: 1024px) {
     .navigation-drawer {
-        left: 0;
+        left: 0 !important;
         box-shadow: none;
         border-right: 1px solid var(--md-outline);
         padding-top: 20px;
     }
+    .menu-btn { display: none; }
 }
 
 .drawer-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     padding: 0 20px 20px;
     border-bottom: 1px solid var(--md-outline);
-    margin-bottom: 12px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .logo h1 {
-    font-size: 1.6rem;
+    font-size: 1.65rem;
     font-weight: 700;
     background: linear-gradient(90deg, var(--md-primary), #3b82f6);
     -webkit-background-clip: text;
@@ -99,17 +95,14 @@ body.dark {
     color: transparent;
 }
 
-.navigation-drawer ul {
-    list-style: none;
-}
+.navigation-drawer ul { list-style: none; padding: 0; }
 
 .navigation-drawer a {
     display: block;
-    padding: 14px 24px;
+    padding: 16px 24px;
     color: var(--md-on-surface);
     text-decoration: none;
     font-weight: 500;
-    transition: background 0.2s;
 }
 
 .navigation-drawer a:hover,
@@ -121,45 +114,45 @@ body.dark {
 /* Main Content */
 .main-content {
     flex: 1;
-    padding: 80px 16px 40px;
+    padding: 85px 16px 40px;
     max-width: 1280px;
     margin: 0 auto;
-    transition: margin-left 0.3s;
+    width: 100%;
 }
 
 @media (min-width: 1024px) {
-    .main-content { margin-left: 280px; padding-top: 20px; }
+    .main-content { padding-top: 30px; margin-left: 280px; }
 }
 
 /* Header */
 .header {
     background: var(--md-surface);
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(16px);
     padding: 12px 16px;
     position: sticky;
     top: 0;
     z-index: 100;
     border-bottom: 1px solid var(--md-outline);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
     display: flex;
     flex-direction: column;
     gap: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
 @media (min-width: 768px) {
-    .header { flex-direction: row; align-items: center; }
+    .header { flex-direction: row; align-items: center; gap: 16px; }
 }
 
 .search-bar {
     display: flex;
     gap: 10px;
-    flex: 1;
     flex-wrap: wrap;
+    width: 100%;
 }
 
 .search-bar input {
     flex: 1;
-    min-width: 220px;
+    min-width: 180px;
     padding: 14px 18px;
     border: 1px solid var(--md-outline);
     border-radius: 9999px;
@@ -168,24 +161,16 @@ body.dark {
 }
 
 .md-btn {
-    padding: 12px 20px;
+    padding: 12px 22px;
     border-radius: 9999px;
     font-weight: 600;
     cursor: pointer;
     transition: var(--transition);
-    border: none;
+    white-space: nowrap;
 }
 
-.md-btn.filled {
-    background: var(--md-primary);
-    color: white;
-}
-
-.md-btn.outlined {
-    border: 2px solid var(--md-outline);
-    background: transparent;
-    color: var(--md-on-surface);
-}
+.md-btn.filled { background: var(--md-primary); color: white; }
+.md-btn.outlined { border: 2px solid var(--md-outline); background: transparent; }
 
 .icon-btn {
     width: 48px;
@@ -209,39 +194,32 @@ body.dark {
     font-size: 1.35rem;
     font-weight: 600;
     color: var(--md-primary);
-    margin-bottom: 16px;
-    padding-left: 12px;
-    border-left: 4px solid var(--md-primary);
+    margin-bottom: 18px;
+    padding-left: 14px;
+    border-left: 5px solid var(--md-primary);
 }
 
-/* Current Weather */
+/* Current Weather Card */
 .current-content {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
+    gap: 24px;
     text-align: center;
 }
 
 @media (min-width: 640px) {
-    .current-content {
-        flex-direction: row;
-        text-align: left;
-        justify-content: space-between;
-    }
+    .current-content { flex-direction: row; text-align: left; justify-content: space-between; }
 }
 
 .temperature .temp {
-    font-size: 4rem;
+    font-size: clamp(2.8rem, 8vw, 4.2rem);
     font-weight: 700;
     color: var(--md-primary);
     line-height: 1;
 }
 
-.feels-like {
-    font-size: 1.05rem;
-    color: #64748b;
-}
+.feels-like { font-size: 1.1rem; color: #64748b; }
 
 .details-grid {
     display: grid;
@@ -252,7 +230,7 @@ body.dark {
 
 .detail-item {
     background: #f8fafc;
-    padding: 12px 16px;
+    padding: 14px 16px;
     border-radius: 16px;
     display: flex;
     justify-content: space-between;
@@ -266,45 +244,40 @@ body.dark .detail-item { background: #334155; }
 /* Forecast */
 .forecast-container {
     display: flex;
-    gap: 16px;
+    gap: 14px;
     overflow-x: auto;
     padding: 12px 4px;
+    -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
 }
 
 .forecast-card {
-    min-width: 118px;
+    min-width: 110px;
     background: #f8fafc;
     border-radius: 24px;
     padding: 18px 12px;
     text-align: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    transition: transform 0.2s;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.07);
 }
 
-.forecast-card:hover {
-    transform: translateY(-6px);
-}
+body.dark .forecast-card { background: #334155; }
 
 .time { font-size: 0.85rem; color: #64748b; }
-.temp, .temp-range { font-size: 1.4rem; font-weight: 700; color: var(--md-primary); margin: 8px 0; }
+.temp, .temp-range { font-size: 1.35rem; font-weight: 700; color: var(--md-primary); margin: 8px 0; }
 
-/* Canvas */
+/* Canvas, Modal, Loader, Footer */
 #weather-canvas {
     position: fixed;
-    top: 0; left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     z-index: -1;
     opacity: 0.18;
     pointer-events: none;
 }
 
-/* Modal, Loader, Footer, Back to Top */
 .loader-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(255,255,255,0.9);
+    background: rgba(255,255,255,0.92);
     display: none;
     flex-direction: column;
     align-items: center;
@@ -312,7 +285,7 @@ body.dark .detail-item { background: #334155; }
     z-index: 2000;
 }
 
-body.dark .loader-overlay { background: rgba(15,23,42,0.9); }
+body.dark .loader-overlay { background: rgba(15,23,42,0.92); }
 
 .loader-spinner {
     width: 56px;
@@ -321,7 +294,6 @@ body.dark .loader-overlay { background: rgba(15,23,42,0.9); }
     border-top-color: var(--md-primary);
     border-radius: 50%;
     animation: spin 1s linear infinite;
-    margin-bottom: 16px;
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -329,44 +301,37 @@ body.dark .loader-overlay { background: rgba(15,23,42,0.9); }
 .modal {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0,0,0,0.65);
     display: none;
     align-items: center;
     justify-content: center;
     z-index: 1300;
 }
 
-.modal-content {
-    max-width: 380px;
-    width: 90%;
-    padding: 28px;
-}
+.modal-content { max-width: 380px; width: 90%; padding: 28px; }
 
 .md-fab {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 56px;
-    height: 56px;
+    bottom: 24px;
+    right: 24px;
+    width: 58px;
+    height: 58px;
     background: var(--md-primary);
     color: white;
     border: none;
     border-radius: 50%;
-    font-size: 1.6rem;
-    box-shadow: 0 4px 12px rgba(30,64,175,0.4);
+    font-size: 1.7rem;
+    box-shadow: 0 5px 15px rgba(30,64,175,0.35);
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s;
     z-index: 1000;
 }
 
-.md-fab.show {
-    opacity: 1;
-    visibility: visible;
-}
+.md-fab.show { opacity: 1; visibility: visible; }
 
 .weather-quote {
-    margin-top: 20px;
+    margin-top: 24px;
     padding-top: 16px;
     border-top: 1px solid var(--md-outline);
     font-style: italic;
@@ -376,7 +341,7 @@ body.dark .loader-overlay { background: rgba(15,23,42,0.9); }
 
 footer {
     text-align: center;
-    padding: 32px 16px 20px;
+    padding: 40px 16px 24px;
     color: #64748b;
     font-size: 0.9rem;
     margin-top: auto;
@@ -386,21 +351,34 @@ footer {
 .error-message {
     background: #fee2e2;
     color: #b91c1c;
-    padding: 16px;
+    padding: 16px 20px;
     border-radius: 16px;
     margin: 16px auto;
     max-width: 800px;
     display: none;
 }
 
-/* Responsive Fine-tuning */
+/* ================== RESPONSIVE BREAKPOINTS ================== */
 @media (max-width: 480px) {
-    .md-card { padding: 20px; margin-bottom: 16px; }
-    .temp { font-size: 3.4rem; }
-    .search-bar { flex-direction: column; }
+    .main-content { padding: 85px 12px 30px; }
+    .md-card { padding: 20px; margin-bottom: 18px; }
+    .temp { font-size: 3.2rem; }
     .search-bar input { min-width: 100%; }
+    .forecast-card { min-width: 98px; padding: 14px 8px; }
 }
 
-@media (min-width: 768px) {
-    .current-content { gap: 40px; }
+@media (min-width: 481px) and (max-width: 1023px) {
+    .current-content { gap: 32px; }
+    .forecast-card { min-width: 115px; }
+}
+
+@media (min-width: 1024px) {
+    .main-content { padding: 30px 24px; }
+    .md-card { padding: 32px; }
+    .search-bar input { min-width: 320px; }
+    .forecast-card { min-width: 130px; }
+}
+
+@media (min-width: 1440px) {
+    .main-content { max-width: 1400px; }
 }
