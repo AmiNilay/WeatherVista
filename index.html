@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#1e3a8a">
-    <meta name="description" content="WeatherVista - Real-time weather with Material Design 3">
+    <meta name="theme-color" content="#1e40af">
     <title>WeatherVista</title>
     
     <link rel="stylesheet" href="style.css">
@@ -14,9 +13,6 @@
     
     <!-- Premium Font: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 </head>
 <body>
     <!-- Loader -->
@@ -25,49 +21,41 @@
         <p>Loading weather data...</p>
     </div>
 
-    <!-- Navigation Drawer -->
+    <!-- Permanent Sidebar (matches your screenshot) -->
     <nav id="sidebar" class="navigation-drawer">
         <div class="drawer-header">
             <div class="logo">
-                <img src="assets/logo.png" alt="WeatherVista" width="32" height="32">
+                <img src="assets/logo.png" alt="WeatherVista" width="32">
                 <h1>WeatherVista</h1>
             </div>
-            <button id="close-sidebar-btn" class="close-btn">✕</button>
         </div>
         <ul>
-            <li><a href="#current-weather">Current Weather</a></li>
+            <li><a href="#current-weather" class="active">Current Weather</a></li>
             <li><a href="#hourly-forecast">Hourly Forecast</a></li>
             <li><a href="#daily-forecast">7-Day Forecast</a></li>
             <li><a href="#about">About</a></li>
             <li><a href="#privacy">Privacy</a></li>
         </ul>
-        <button id="install-app-btn" class="install-btn" style="display:none;">Install App</button>
+        <button id="install-app-btn" class="md-btn filled install-btn" style="display:none; margin: 20px 16px; width: calc(100% - 32px);">
+            Install App
+        </button>
     </nav>
 
-    <header class="header">
-        <button id="sidebar-toggle" class="menu-btn" aria-label="Open menu">☰</button>
-        
-        <div class="logo header-logo">
-            <img src="assets/logo.png" alt="WeatherVista" width="32" height="32">
-            <h1>WeatherVista</h1>
-        </div>
-
-        <div class="header-right">
-            <div id="greeting" class="greeting"></div>
-            <div id="clock" class="clock"></div>
-            <button id="temp-toggle" class="md-btn icon-btn"></button>
-            <button id="mode-toggle" class="md-btn icon-btn"></button>
-        </div>
-    </header>
-
-    <main>
-        <div class="search-container">
+    <main class="main-content">
+        <header class="header">
             <div class="search-bar">
                 <input type="text" id="city-input" placeholder="Search city or zip code..." aria-label="Search city">
                 <button id="search-btn" class="md-btn filled">Search</button>
                 <button id="location-btn" class="md-btn outlined">📍 Find Me</button>
             </div>
-        </div>
+            
+            <div class="header-right">
+                <div id="greeting" class="greeting"></div>
+                <div id="clock" class="clock"></div>
+                <button id="temp-toggle" class="md-btn icon-btn"></button>
+                <button id="mode-toggle" class="md-btn icon-btn"></button>
+            </div>
+        </header>
 
         <div id="error-message" class="error-message"></div>
 
@@ -82,72 +70,72 @@
                 </div>
                 <div class="temp-container">
                     <img id="weather-icon" src="" alt="">
-                    <div class="temperature">
-                        <span id="temp">--°</span>
+                    <div>
+                        <span id="temp" class="temp">--°</span>
                         <span id="feels-like" class="feels-like">Feels like —°</span>
                     </div>
                 </div>
-                <div class="details-grid">
-                    <div class="detail-item"><span class="label">Humidity</span><span id="humidity" class="value">—</span></div>
-                    <div class="detail-item"><span class="label">Wind</span><span id="wind" class="value">—</span></div>
-                    <div class="detail-item"><span class="label">Pressure</span><span id="pressure" class="value">—</span></div>
-                    <div class="detail-item"><span class="label">AQI</span><span id="aqi" class="value">—</span></div>
-                    <div class="detail-item"><span class="label">UV Index</span><span id="uv" class="value">—</span></div>
-                </div>
+            </div>
+            <div class="details-grid">
+                <div class="detail-item"><span class="label">Humidity</span><span id="humidity" class="value">—</span></div>
+                <div class="detail-item"><span class="label">Wind</span><span id="wind" class="value">—</span></div>
+                <div class="detail-item"><span class="label">Pressure</span><span id="pressure" class="value">—</span></div>
+                <div class="detail-item"><span class="label">AQI</span><span id="aqi" class="value">—</span></div>
+                <div class="detail-item"><span class="label">UV Index</span><span id="uv" class="value">—</span></div>
             </div>
             <p id="quote" class="weather-quote"></p>
         </section>
 
-        <!-- Hourly Forecast -->
+        <!-- Hourly -->
         <section id="hourly-forecast" class="md-card">
             <h2 class="section-title">Hourly Forecast</h2>
             <div class="forecast-container hourly-container"></div>
         </section>
 
-        <!-- 7-Day Forecast -->
+        <!-- Daily -->
         <section id="daily-forecast" class="md-card">
             <h2 class="section-title">7-Day Forecast</h2>
             <div class="forecast-container daily-container"></div>
         </section>
 
         <!-- Alerts -->
-        <section id="alerts" class="md-card alert-card" style="display:none;"></section>
-
-        <!-- Canvas -->
-        <canvas id="weather-canvas" aria-hidden="true"></canvas>
-
-        <!-- Location Permission -->
-        <div id="location-popup" class="modal">
-            <div class="modal-content md-card">
-                <h2>Location Access</h2>
-                <p>WeatherVista needs your location to provide accurate local weather.</p>
-                <div class="modal-actions">
-                    <button id="deny-location" class="md-btn outlined">Deny</button>
-                    <button id="allow-location" class="md-btn filled">Allow</button>
-                </div>
-            </div>
-        </div>
+        <section id="alerts" class="md-card" style="display:none;"></section>
 
         <!-- About -->
-        <section id="about" class="md-card info-card">
+        <section id="about" class="md-card">
             <h2 class="section-title">Welcome to WeatherVista</h2>
             <p>Built with care by Nilay Naha. Delivers real-time weather with beautiful Material Design 3 interface, dynamic animations, and smooth PWA experience.</p>
         </section>
 
         <!-- Privacy -->
-        <section id="privacy" class="md-card info-card">
+        <section id="privacy" class="md-card">
             <h2 class="section-title">Privacy Policy</h2>
             <p>We only use your location (with permission) to fetch weather data. Nothing is stored on our servers. Weather data provided by <a href="https://www.weatherapi.com/" target="_blank">WeatherAPI.com</a>.</p>
         </section>
     </main>
 
+    <canvas id="weather-canvas" aria-hidden="true"></canvas>
     <button id="back-to-top" class="md-fab">↑</button>
+
+    <!-- Location Popup -->
+    <div id="location-popup" class="modal">
+        <div class="modal-content md-card">
+            <h2>Location Access</h2>
+            <p>Allow WeatherVista to use your location for accurate weather?</p>
+            <div class="modal-actions">
+                <button id="deny-location" class="md-btn outlined">Deny</button>
+                <button id="allow-location" class="md-btn filled">Allow</button>
+            </div>
+        </div>
+    </div>
 
     <footer>
         <p>Designed & Developed by <a href="https://github.com/AmiNilay" target="_blank">Nilay Naha</a></p>
         <p>© <span id="copyright-year"></span> WeatherVista • Data by WeatherAPI.com</p>
     </footer>
 
+    <!-- Scripts -->
+    <script src="config.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
