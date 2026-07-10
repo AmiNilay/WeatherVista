@@ -1,8 +1,8 @@
-// script.js - Full Material Design 3 Version
+// script.js - Fully Responsive Version
 const API_KEY = window.WEATHER_API_KEY;
 
 if (!API_KEY) {
-    console.error("%c❌ API KEY MISSING! Please add config.js", "color:red;font-size:16px");
+    console.error("%c❌ API KEY MISSING! Add config.js", "color:red;font-size:16px");
 }
 
 const BASE_URL = 'https://api.weatherapi.com/v1';
@@ -84,8 +84,7 @@ async function getWeather(query) {
 
         localStorage.setItem('lastCity', data.location.name);
     } catch (err) {
-        showError("Could not load weather. Please try again later.");
-        console.error(err);
+        showError("Could not load weather. Please try again.");
     } finally {
         showLoader(false);
     }
@@ -111,8 +110,6 @@ function displayCurrentWeather(data) {
 
     const icon = document.getElementById('weather-icon');
     icon.src = `https:${curr.condition.icon}`;
-    icon.alt = curr.condition.text;
-
     document.getElementById('quote').textContent = getWeatherQuote(curr.condition.text);
 }
 
@@ -179,18 +176,9 @@ function displayAlerts(alerts) {
     });
 }
 
-function showLoader(show) {
-    loaderElement.style.display = show ? 'flex' : 'none';
-}
-
-function showError(msg) {
-    errorElement.textContent = msg;
-    errorElement.style.display = 'block';
-}
-
-function clearError() {
-    errorElement.style.display = 'none';
-}
+function showLoader(show) { loaderElement.style.display = show ? 'flex' : 'none'; }
+function showError(msg) { errorElement.textContent = msg; errorElement.style.display = 'block'; }
+function clearError() { errorElement.style.display = 'none'; }
 
 function updateToggles() {
     tempToggle.textContent = isCelsius ? '°F' : '°C';
@@ -207,7 +195,7 @@ function updateClock() {
     clock.textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
 }
 
-// Canvas Animation Functions (Full)
+// Canvas Animation (Full)
 function animateWeather(condition) {
     if (!ctx || !canvas) return;
     if (animationFrameId) cancelAnimationFrame(animationFrameId);
@@ -216,27 +204,15 @@ function animateWeather(condition) {
     particles = [];
 
     const lower = condition.toLowerCase();
-    if (lower.includes('rain') || lower.includes('shower')) {
-        setupRain(lower.includes('heavy') || lower.includes('thunder'));
-        animationFrameId = requestAnimationFrame(animateRain);
-    } else if (lower.includes('snow')) {
-        setupSnow();
-        animationFrameId = requestAnimationFrame(animateSnow);
-    } else if (lower.includes('fog') || lower.includes('mist')) {
-        setupFog();
-        animationFrameId = requestAnimationFrame(animateFog);
-    } else if (lower.includes('clear') || lower.includes('sunny')) {
-        setupSunny();
-        animationFrameId = requestAnimationFrame(animateSunny);
-    } else {
-        setupCloudy();
-        animationFrameId = requestAnimationFrame(animateCloudy);
-    }
+    if (lower.includes('rain')) { setupRain(); animationFrameId = requestAnimationFrame(animateRain); }
+    else if (lower.includes('snow')) { setupSnow(); animationFrameId = requestAnimationFrame(animateSnow); }
+    else if (lower.includes('fog') || lower.includes('mist')) { setupFog(); animationFrameId = requestAnimationFrame(animateFog); }
+    else if (lower.includes('clear') || lower.includes('sunny')) { setupSunny(); animationFrameId = requestAnimationFrame(animateSunny); }
+    else { setupCloudy(); animationFrameId = requestAnimationFrame(animateCloudy); }
 }
 
-function setupRain(heavy = false) {
-    const count = heavy ? 160 : 80;
-    for (let i = 0; i < count; i++) {
+function setupRain() {
+    for (let i = 0; i < 90; i++) {
         particles.push({
             x: Math.random() * canvas.width,
             y: Math.random() * canvas.height,
@@ -259,7 +235,7 @@ function setupSnow() {
 }
 
 function setupFog() {
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 18; i++) {
         particles.push({
             x: Math.random() * canvas.width,
             y: Math.random() * canvas.height * 0.6 + 80,
@@ -333,7 +309,6 @@ function animateSunny() {
     const cx = canvas.width * 0.78;
     const cy = canvas.height * 0.18;
     const r = 58;
-
     const glow = ctx.createRadialGradient(cx, cy, r*0.6, cx, cy, r*2.5);
     glow.addColorStop(0, 'rgba(255, 230, 100, 0.7)');
     glow.addColorStop(1, 'rgba(255, 180, 50, 0)');
@@ -364,7 +339,6 @@ function animateCloudy() {
     animationFrameId = requestAnimationFrame(animateCloudy);
 }
 
-// Event Listeners
 function setupEventListeners() {
     searchBtn.addEventListener('click', () => {
         const q = cityInput.value.trim();
@@ -374,9 +348,7 @@ function setupEventListeners() {
 
     locationBtn.addEventListener('click', () => {
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(pos => {
-                getWeather(`${pos.coords.latitude},${pos.coords.longitude}`);
-            }, () => showError("Location access denied"));
+            navigator.geolocation.getCurrentPosition(pos => getWeather(`${pos.coords.latitude},${pos.coords.longitude}`));
         }
     });
 
@@ -405,9 +377,7 @@ function setupEventListeners() {
     denyBtn.addEventListener('click', () => { locationPopup.style.display = 'none'; });
 
     backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-    window.addEventListener('scroll', () => {
-        backToTop.classList.toggle('show', window.scrollY > 500);
-    });
+    window.addEventListener('scroll', () => backToTop.classList.toggle('show', window.scrollY > 500));
 
     window.addEventListener('beforeinstallprompt', e => {
         deferredPrompt = e;
@@ -436,6 +406,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             locationPopup.style.display = 'flex';
             localStorage.setItem('locationPopupShown', 'true');
-        }, 1500);
+        }, 1200);
     }
 });
